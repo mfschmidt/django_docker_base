@@ -6,6 +6,27 @@ This is a template for a solid django app with postgres database and nginx for s
 
 It is built on the excellent information at [testdriven.io](https://testdriven.io/blog/dockerizing-django-with-postgres-gunicorn-and-nginx/), where I learned more about using docker-compose than in several years of working with simpler containers.
 
+## Installation and usage
+
+First, clone the project
+
+```bash
+to come
+```
+
+Then create necessary directories, not included in git
+
+```
+mkdir postgres_data
+```
+
+Then start the development servers
+
+```bash
+# To bring all containers up
+docker-compose -f docker-compose.dev.yml up -d --build
+```
+
 ## Helpful commands:
 
 ```bash
