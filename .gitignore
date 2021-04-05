@@ -1,6 +1,43 @@
+# Confidential passwords and such
 .env*
-proj/__pycache__
+
+# C extensions
+*.so
+
+# Optimized cached code
+proj/__pycache__/
 *.pyo
 *.pyc
-*/db.sqlite3
+
+# Packaging files
+bin/
+build/
+develop-eggs/
+dist/
+eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Environment stuff
+venv/
+.venv/
+Pipfile
+Pipfile.lock
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Django stuff
+*.log
+*.pot
+
+# Sphinx
+docs/_build/
+
+# Temporary editor files
 *.swp
