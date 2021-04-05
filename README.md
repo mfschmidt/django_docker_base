@@ -8,29 +8,35 @@ It is built on the excellent information at [testdriven.io](https://testdriven.i
 
 ## Installation and usage
 
-First, clone the project
+First, clone the project and create a necessary database directory.
 
 ```bash
-to come
-```
-
-Then create necessary directories, not included in git
-
-```
+git clone https://github.com/mfschmidt/django_docker_base.git
+cd django_docker_base
 mkdir postgres_data
 ```
 
-Then start the development servers
+Fill in environment variables with confidential data, not for git. Change SECRET_KEY, SQL_PASSWORD, POSTGRES_PASSWORD for all configurations.
+
+```bash
+vim .env.dev .env.dev.db .env.prod .env.prod.db
+```
+
+Then start the development servers and initialize the database.
 
 ```bash
 # To bring all containers up
 docker-compose -f docker-compose.dev.yml up -d --build
+docker-compose -f docker-compose.dev.yml exec python manage.py makemigrations
+docker-compose -f docker-compose.dev.yml exec python manage.py migrate
 ```
+
+There should now be a development-configured django site running on [http://localhost:8000/](http://localhost:8000/).
 
 ## Helpful commands:
 
 ```bash
-# To bring all containers up
+# To bring all containers up (note .prod indicates production rather than dev)
 docker-compose -f docker-compose.prod.yml up -d --build
 ```
 
