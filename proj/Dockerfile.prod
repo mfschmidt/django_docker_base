@@ -1,0 +1,58 @@
+##==-- Create an app builder container first.
+
+
+# pull official base image
+FROM python:3.8-alpine as builder
+
+# set work directory
+WORKDIR /usr/src/proj
+
+# set environment variables
+ENV PYTHONDONTWRITEBYTECODE 1
+ENV PYTHONUNBUFFERED 1
+
+# install dependencies
+RUN apk --no-cache -U upgrade && \
+    apk add postgresql-dev gcc python3-dev musl-dev && \
+    sync && \
+    pip install --upgrade pip && \
+    pip install flake8
+
+# copy project and lint it
+COPY . .
+RUN flake8 --ignore=E501,F401 .
+
+# Install the rest of the dependencies
+COPY ./requirements.txt .
+RUN pip wheel --no-cache-dir --no-deps \
+    --wheel-dir /usr/src/proj/wheels \
+    -r requirements.txt
+
+
+##==-- Then build the actual runnable container
+
+FROM python:3.8-alpine
+
+RUN mkdir -p /home/proj
+
+RUN addgroup -S proj && adduser -S proj -G proj
+
+ENV HOME=/home/proj
+ENV PROJ_HOME=/home/proj/web
+RUN mkdir $PROJ_HOME
+RUN mkdir $PROJ_HOME/static
+WORKDIR $PROJ_HOME
+
+RUN apk --no-cache -U upgrade && \
+    apk add libpq
+COPY --from=builder /usr/src/proj/wheels /wheels
+COPY --from=builder /usr/src/proj/requirements.txt .
+RUN pip install --no-cache /wheels/*
+
+COPY ./run.sh $PROJ_HOME
+COPY . $PROJ_HOME
+RUN chown -R proj:proj $PROJ_HOME
+USER proj
+
+# Run the project
+ENTRYPOINT ["/home/proj/web/run.sh"]
