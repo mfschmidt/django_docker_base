@@ -16,10 +16,11 @@ cd django_docker_base
 mkdir postgres_data
 ```
 
-Fill in environment variables with confidential data, not for git. Change SECRET_KEY, SQL_PASSWORD, POSTGRES_PASSWORD for all configurations.
+Fill in environment variables with confidential data, not for git. Change the SECRET_KEY, SQL_PASSWORD, POSTGRES_PASSWORD values for all configurations. The following instructions will use the same SECRET_KEY for both development and production. They will also use the same password for both development and production databases. You can use different values for each by changing values in .dev and .prod files separately. Obviously, use your own secret values in the following two commands.
 
 ```bash
-vim .env.dev .env.dev.db .env.prod .env.prod.db
+sed -i 's/SECRET_KEY_VALUE/a_secret_key_generated_without_forward_slashes_or_double_quotes/g' .env.*
+sed -i 's/DB_PASSWORD_VALUE/my_own_password/g' .env.*
 ```
 
 Then start the development servers and initialize the database.
@@ -29,9 +30,12 @@ Then start the development servers and initialize the database.
 docker-compose -f docker-compose.dev.yml up -d --build
 docker-compose -f docker-compose.dev.yml exec python manage.py makemigrations
 docker-compose -f docker-compose.dev.yml exec python manage.py migrate
+
+# To take it back down
+docker-compose -f docker-compose.dev.yml down -v
 ```
 
-There should now be a development-configured django site running on [http://localhost:8000/](http://localhost:8000/).
+There should now be a development-configured django site running on [http://localhost:8000/](http://localhost:8000/). Run the same three commands, replacing .dev. with .prod. to start the production site with the same code and its own database. All configuration can be done by modifying .env.*'s, Dockerfile's and docker-compose.yml's.
 
 ## Helpful commands:
 
